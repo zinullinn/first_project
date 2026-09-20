@@ -12,7 +12,7 @@ This practice contains simple, runnable examples of Python functions, lambda exp
 ## Run an example
 
 ```powershell
-python Practice-03/functions/basic_functions.py
+python Practice3/functions/basic_functions.py
 ```
 
 Each file is independent and prints its result when run.
