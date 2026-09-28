@@ -23,7 +23,7 @@ Generator expressions provide a concise lazy alternative, for example `(n * n fo
 
 ## Exercises
 
-The following examples use inclusive endpoints where the prompt says “up to” or “between.”
+The following examples use inclusive endpoints where the prompt says "up to" or "between."
 
 ```python
 def square_numbers(n):
@@ -66,7 +66,10 @@ if __name__ == "__main__":
     even_numbers(n)
     print("Divisible by both 3 and 4:", list(divisible_by_3_and_4(n)))
 
-    a, b = 2, 5
+    a = int(input("Enter a: "))
+    b = int(input("Enter b (at least a): "))
+    if b < a:
+        raise ValueError("b must be greater than or equal to a")
     print(f"Squares from {a} through {b}:")
     for value in squares(a, b):
         print(value)
