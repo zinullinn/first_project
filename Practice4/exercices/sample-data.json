@@ -1,9 +1,35 @@
 {
-  "course": "Python Advanced Topics",
-  "practice": 4,
-  "students": [
-    {"id": 1, "name": "Aida", "score": 92, "active": true},
-    {"id": 2, "name": "Daniyar", "score": 85, "active": true},
-    {"id": 3, "name": "Mira", "score": 78, "active": false}
+  "totalCount": "3",
+  "imdata": [
+    {
+      "l1PhysIf": {
+        "attributes": {
+          "dn": "topology/pod-1/node-201/sys/phys-[eth1/33]",
+          "descr": "",
+          "speed": "inherit",
+          "mtu": "9150"
+        }
+      }
+    },
+    {
+      "l1PhysIf": {
+        "attributes": {
+          "dn": "topology/pod-1/node-201/sys/phys-[eth1/34]",
+          "descr": "",
+          "speed": "inherit",
+          "mtu": "9150"
+        }
+      }
+    },
+    {
+      "l1PhysIf": {
+        "attributes": {
+          "dn": "topology/pod-1/node-201/sys/phys-[eth1/35]",
+          "descr": "",
+          "speed": "inherit",
+          "mtu": "9150"
+        }
+      }
+    }
   ]
 }
