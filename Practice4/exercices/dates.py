@@ -5,8 +5,20 @@ from datetime import date, datetime, timedelta, timezone
 
 def main() -> None:
     today = date.today()
-    appointment = datetime(2026, 10, 15, 14, 30)
+    now = datetime.now()
+
+    print("five days ago:", today - timedelta(days=5))
+    print("yesterday:", today - timedelta(days=1))
     print("today:", today)
+    print("tomorrow:", today + timedelta(days=1))
+    print("datetime without microseconds:", now.replace(microsecond=0))
+
+    first_date = datetime(2026, 9, 1, 9, 0, 0)
+    second_date = datetime(2026, 9, 3, 12, 30, 0)
+    difference_seconds = abs((second_date - first_date).total_seconds())
+    print("date difference in seconds:", int(difference_seconds))
+
+    appointment = datetime(2026, 10, 15, 14, 30)
     print("appointment:", appointment)
     print("formatted:", appointment.strftime("%A, %B %d, %Y at %I:%M %p"))
 
