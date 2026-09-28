@@ -1,0 +1,9 @@
+{
+  "course": "Python Advanced Topics",
+  "practice": 4,
+  "students": [
+    {"id": 1, "name": "Aida", "score": 92, "active": true},
+    {"id": 2, "name": "Daniyar", "score": 85, "active": true},
+    {"id": 3, "name": "Mira", "score": 78, "active": false}
+  ]
+}
