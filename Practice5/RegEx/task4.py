@@ -1,13 +1,11 @@
-"""Splitting text and replacing patterns."""
+"""Find a capital letter followed by one or more lowercase letters."""
 
 import re
 
 
-def main() -> None:
-    print("split on commas/semicolons:", re.split(r"[,;]\s*", "apples, pears; plums"))
-    print("replace digits:", re.sub(r"\d+", "#", "Room 12, floor 3"))
-    print("limit replacements:", re.sub(r"\s+", " ", "extra    spaces   here", count=1))
+def find_capitalized_words(text: str) -> list[str]:
+    return re.findall(r"\b[A-Z][a-z]+\b", text)
 
 
 if __name__ == "__main__":
-    main()
+    print(find_capitalized_words("Alice met BOB and Charlie in NewYork."))

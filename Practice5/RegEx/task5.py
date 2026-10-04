@@ -1,14 +1,12 @@
-"""Regex flags for case-insensitive, multiline, and dot-all matching."""
+"""Match text beginning with 'a' and ending with 'b'."""
 
 import re
 
 
-def main() -> None:
-    text = "First line\nsecond LINE\nlast line"
-    print("IGNORECASE:", re.findall(r"line", text, re.IGNORECASE))
-    print("MULTILINE anchors:", re.findall(r"^.*line$", text, re.IGNORECASE | re.MULTILINE))
-    print("DOTALL:", bool(re.search(r"First.*last", text, re.DOTALL)))
+def starts_with_a_ends_with_b(text: str) -> bool:
+    return re.fullmatch(r"a.*b", text, flags=re.DOTALL) is not None
 
 
 if __name__ == "__main__":
-    main()
+    for sample in ("ab", "a123b", "a line\nand b", "ba"):
+        print(f"{sample!r}: {starts_with_a_ends_with_b(sample)}")

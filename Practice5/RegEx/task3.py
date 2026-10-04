@@ -1,15 +1,11 @@
-"""First match, all matches, and match-at-start examples."""
+"""Find lowercase-word sequences joined by underscores."""
 
 import re
 
 
-def main() -> None:
-    text = "Order A-104: 3 items, order B-208: 5 items"
-    print("search:", re.search(r"[A-Z]-\d+", text).group())
-    print("findall:", re.findall(r"\d+", text))
-    print("match at beginning:", re.match(r"Order", text).group())
-    print("match away from beginning:", re.match(r"A-104", text))
+def find_underscore_sequences(text: str) -> list[str]:
+    return re.findall(r"\b[a-z]+(?:_[a-z]+)+\b", text)
 
 
 if __name__ == "__main__":
-    main()
+    print(find_underscore_sequences("good_day use snake_case and bad_Name"))

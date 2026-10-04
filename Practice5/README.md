@@ -6,21 +6,16 @@ Runnable examples for Python's `re` module, plus a receipt parser. These example
 
 - `receipt_parser.py` parses the included `raw.txt` receipt into JSON.
 - `raw.txt` is a sample receipt used by the parser. No receipt file was present in the repository when this practice was created.
-- `RegEx/task1.py` demonstrates metacharacters and character classes.
-- `RegEx/task2.py` demonstrates special sequences and quantifiers.
-- `RegEx/task3.py` demonstrates `search`, `findall`, and `match`.
-- `RegEx/task4.py` demonstrates `split` and `sub`.
-- `RegEx/task5.py` demonstrates regex flags.
+- `RegEx/task1.py` through `RegEx/task10.py` solve the ten standalone regex exercises.
+- `RegEx/topic_*.py` demonstrate syntax, special sequences, regex functions, and flags.
 
 Run from the repository root:
 
 ```powershell
 python Practice5/receipt_parser.py
 python Practice5/RegEx/task1.py
-python Practice5/RegEx/task2.py
-python Practice5/RegEx/task3.py
-python Practice5/RegEx/task4.py
-python Practice5/RegEx/task5.py
+python Practice5/RegEx/task10.py
+python Practice5/RegEx/topic_functions.py
 ```
 
 The receipt parser reads its input from the same directory as the script. It handles common currency symbols, optional thousands separators, multiple date/time styles, and payment labels. When the provided course `raw.txt` or `regex.md` becomes available, replace the sample receipt or adapt the practice inputs as needed.
