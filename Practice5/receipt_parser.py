@@ -1,4 +1,4 @@
-"""Extract structured fields from a plain-text receipt using regular expressions."""
+"""Extract structured fields from the EUROPHARMA receipt with regular expressions."""
 
 from __future__ import annotations
 
@@ -7,73 +7,60 @@ import re
 from pathlib import Path
 
 
-# Supports e.g. 1250, 1,250.00, 1 250,00, and optional currency markers.
-PRICE_RE = re.compile(
-    r"(?<![\w.])(?:[-+]?\s*)?(?:[$€£₸]\s*)?"
-    r"(\d{1,3}(?:[ ,.]\d{3})*(?:[.,]\d{2})|\d+)(?:\s*(?:KZT|USD|EUR|GBP))?",
+ITEM_RE = re.compile(
+    r"^\s*(\d+)\.\s*\r?\n"
+    r"(.*?)\r?\n"
+    r"([\d ]+,\d{2})\s*x\s*([\d ]+,\d{2})\s*\r?\n"
+    r"([\d ]+,\d{2})\s*\r?\nСтоимость\s*\r?\n([\d ]+,\d{2})",
+    re.MULTILINE,
+)
+DATE_TIME_RE = re.compile(
+    r"Время:\s*(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})",
     re.IGNORECASE,
 )
-DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2}|\d{1,2}[/. -]\d{1,2}[/. -]\d{2,4})\b")
-TIME_RE = re.compile(r"\b([01]?\d|2[0-3]):[0-5]\d(?::[0-5]\d)?\s*(?:AM|PM)?\b", re.IGNORECASE)
-PAYMENT_RE = re.compile(
-    r"\b(?:payment\s*(?:method)?|paid\s*by)\s*:?\s*(.+?)\s*$",
-    re.IGNORECASE | re.MULTILINE,
-)
-TOTAL_RE = re.compile(r"^\s*(?:grand\s+)?total\s*:?\s*([^\r\n]+)", re.IGNORECASE | re.MULTILINE)
+TOTAL_RE = re.compile(r"ИТОГО\s*:\s*([\d ]+,\d{2})", re.IGNORECASE)
+PAYMENT_RE = re.compile(r"Банковская карта\s*:\s*\r?\n\s*([\d ]+,\d{2})", re.IGNORECASE)
 
 
-def parse_amount(text: str) -> float:
-    """Convert common receipt number formats to a float."""
-    value = re.sub(r"[^\d,.]", "", text)
-    if "," in value and "." in value:
-        decimal = "," if value.rfind(",") > value.rfind(".") else "."
-        thousands = "." if decimal == "," else ","
-        value = value.replace(thousands, "").replace(decimal, ".")
-    elif "," in value:
-        tail = value.rsplit(",", 1)[1]
-        value = value.replace(",", ".") if len(tail) == 2 else value.replace(",", "")
-    elif value.count(".") > 1:
-        head, tail = value.rsplit(".", 1)
-        value = head.replace(".", "") + "." + tail
-    return float(value)
+def parse_amount(value: str) -> float:
+    """Parse Russian receipt amounts such as ``18 009,00``."""
+    return float(value.replace(" ", "").replace(",", "."))
 
 
 def parse_receipt(text: str) -> dict[str, object]:
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    prices: list[float] = []
     products: list[dict[str, object]] = []
+    for match in ITEM_RE.finditer(text):
+        number, name, quantity, unit_price, line_amount, _cost = match.groups()
+        products.append(
+            {
+                "number": int(number),
+                "name": " ".join(name.split()),
+                "quantity": parse_amount(quantity),
+                "unit_price": parse_amount(unit_price),
+                "price": parse_amount(line_amount),
+            }
+        )
 
-    for line in lines:
-        match = PRICE_RE.search(line)
-        if not match:
-            continue
-        amount = parse_amount(match.group(1))
-        prices.append(amount)
-        label = line[: match.start()].strip(" :-\t")
-        # Keep item lines only; totals and adjustments are reported separately.
-        if label and not re.search(r"\b(?:subtotal|total|tax|discount|change|cash|paid)\b", label, re.I):
-            products.append({"name": label, "price": amount})
-
+    date_time = DATE_TIME_RE.search(text)
     total_match = TOTAL_RE.search(text)
-    total = parse_amount(total_match.group(1)) if total_match else None
-    date_match = DATE_RE.search(text)
-    time_match = TIME_RE.search(text)
     payment_match = PAYMENT_RE.search(text)
+    prices = [item["price"] for item in products]
 
     return {
         "prices": prices,
         "products": products,
-        "calculated_total": round(sum(item["price"] for item in products), 2),
-        "receipt_total": total,
-        "date": date_match.group(1) if date_match else None,
-        "time": time_match.group(0).strip() if time_match else None,
-        "payment_method": payment_match.group(1).strip() if payment_match else None,
+        "calculated_total": round(sum(prices), 2),
+        "receipt_total": parse_amount(total_match.group(1)) if total_match else None,
+        "date": date_time.group(1) if date_time else None,
+        "time": date_time.group(2) if date_time else None,
+        "payment_method": "Банковская карта" if payment_match else None,
+        "payment_amount": parse_amount(payment_match.group(1)) if payment_match else None,
     }
 
 
 def main() -> None:
     receipt_path = Path(__file__).with_name("raw.txt")
-    result = parse_receipt(receipt_path.read_text(encoding="utf-8"))
+    result = parse_receipt(receipt_path.read_text(encoding="utf-8-sig"))
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
