@@ -1,0 +1,18 @@
+                 CORNER MARKET
+              18 Green Street
+             Astana, Kazakhstan
+
+Receipt No: 10482
+Date: 2025-03-08
+Time: 14:32
+--------------------------------
+Milk 2L                  1,250.00 KZT
+Whole wheat bread          650.00 KZT
+Apples 1.5 kg            1,800.00 KZT
+Tea                       950.00 KZT
+--------------------------------
+Subtotal                 4,650.00 KZT
+Discount                  -150.00 KZT
+TOTAL                    4,500.00 KZT
+Payment method: VISA
+Thank you for shopping!
