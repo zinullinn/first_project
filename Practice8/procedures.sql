@@ -10,8 +10,19 @@ BEGIN
     END IF;
 
     IF EXISTS (SELECT 1 FROM contacts WHERE username = BTRIM(p_username)) THEN
-        UPDATE contacts SET phone = BTRIM(p_phone)
-        WHERE username = BTRIM(p_username);
+        -- Preserve other phone rows for the same username, and avoid creating
+        -- a duplicate pair when the requested phone is already present.
+        IF NOT EXISTS (
+            SELECT 1 FROM contacts
+            WHERE username = BTRIM(p_username) AND phone = BTRIM(p_phone)
+        ) THEN
+            UPDATE contacts SET phone = BTRIM(p_phone)
+            WHERE id = (
+                SELECT id FROM contacts
+                WHERE username = BTRIM(p_username)
+                ORDER BY id LIMIT 1
+            );
+        END IF;
     ELSE
         INSERT INTO contacts(username, phone)
         VALUES (BTRIM(p_username), BTRIM(p_phone));
@@ -56,7 +67,17 @@ BEGIN
                 'index', i, 'username', p_usernames[i], 'phone', p_phones[i], 'reason', reason
             ));
         ELSIF EXISTS (SELECT 1 FROM contacts WHERE username = current_name) THEN
-            UPDATE contacts SET phone = current_phone WHERE username = current_name;
+            IF NOT EXISTS (
+                SELECT 1 FROM contacts
+                WHERE username = current_name AND phone = current_phone
+            ) THEN
+                UPDATE contacts SET phone = current_phone
+                WHERE id = (
+                    SELECT id FROM contacts
+                    WHERE username = current_name
+                    ORDER BY id LIMIT 1
+                );
+            END IF;
         ELSE
             INSERT INTO contacts(username, phone) VALUES (current_name, current_phone);
         END IF;
